@@ -1,0 +1,81 @@
+	Hadoop commands:- (HDFS)
+
+- # hadoop fs -ls /
+- # hadoop fs -mkdir /new directory name
+- # hadoop fs -rmr  /directory name
+- # hadoop fs -copyFromLocal /linux directory /hadoop directory
+- # hadoop fs -cat /hadoop directory/filename
+  
+
+linux commands:
+
+- cd  directory name      (To inter directory)
+- cd ..                   (To move out directory)
+- pwd                     (parent directory path)
+- ls                      (list directory
+- sh                      (execute shell script)
+- cat                     (display the content of file)
+- clear                   (clear screen )
+
+--------------------------------------------------------------------------------------------------------------------------------------------
+
+                                         Map Reduces with java Programing 
+
+
+# cd  java-files 
+# sh  java-compile.sh WordCount.java
+# hadoop fs -mkdir /shiv
+# hadoop fs -copyFromLocal /linux directory  /hadoop directory
+# hadoop fs -ls /shiv
+# hadoop jar WordCount.jar org.apache.hadoop.examples.WordCount  /shiv/4300.txt /testout 
+# cd ..
+# hadoop fs -cat /testout/part-r-00000
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------
+                                                 Type Pig 
+
+
+pig commands:
+
+
+1.Example of word Count 
+  
+
+- grunt> A = LOAD '/ravi/4300.txt' USING TextLoader()  AS (Words:Chararray) ;
+- grunt> DUMP A ;
+- grunt> B = FOREACH A GENERATE FLATTEN (TOKENIZE(*)) ;
+- grunt> C = GROUP B BY $0 ;
+- grunt> D = FOREACH C GENERATE group, COUNT(B) ;
+- grunt> STORE D INTO '/output' ;
+
+
+
+2.Example Of Sensor Communication
+
+- grunt> LOGS = LOAD '/sam/sample.log' using PigStorage(',');
+- grunt> DUMP LOGS;
+- grunt> LEVELS = foreach LOGS generate REGEX_EXTRACT($0, '(TRACE|DEBUG|INFO|WARN|ERROR|FATAL)', 1) as LOGLEVEL;
+- grunt> FILTEREDLEVELS = FILTER LEVELS by LOGLEVEL is not null;
+- grunt> DUMP FILTEREDLEVELS;
+- grunt> GROUPEDLEVELS = GROUP FILTEREDLEVELS by LOGLEVEL;
+- grunt> FREQUENCIES = foreach GROUPEDLEVELS generate group as LOGLEVEL, COUNT(FILTEREDLEVELS.LOGLEVEL) as COUNT;
+- grunt> RESULT = order FREQUENCIES by COUNT desc;
+- grunt> DUMP RESULT;
+
+hadoop fs -get /RESULT /root
+
+3. Batting Examples 
+
+- grunt> batting = LOAD '/ravi/Batting.csv' USING PigStorage(',') ;
+- grunt> DUMP batting ;
+- grunt> runs = FOREACH batting GENERATE $0 as  playerID , $1 as year , $8 as runs ;
+- grunt> runs = filter runs by runs>0 ;
+- grunt> grp_data = GROUP runs by (year) ;
+- grunt> max_runs = FOREACH grp_data GENERATE group as grp_data, MAX (runs.runs) as max_runs ;
+- grunt> join_max_runs = JOIN max_runs by ($0, max_runs), runs by (year,runs) ;
+- grunt> join_data = FOREACH join_max_runs GENERATE $0 as year, $2 as playerID, $1 as runs ;
+- grunt> DUMP join_data ; 
+
+
+http://www.oldapps.com/VMware_player.php?system=Windows_XP
